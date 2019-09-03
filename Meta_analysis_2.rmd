@@ -32,7 +32,7 @@ BibOptions(check.entries = FALSE,
 myBib <- ReadBib("./myBib.bib", check = FALSE)
 ```
 
----
+
 ## Outline Course.
 
 * Principles of systematic reviews / meta-analysis
@@ -581,14 +581,12 @@ n <- 150
 ## Then, Fisher's z is calculated as follows:
 z_r <- 0.5 * log((1 + r) / (1-r)) # log is natural logarithm / log10 is base 10
 z_r
-# fun fact, this is the inverse hyperbolic tangent..., https://en.wikipedia.org/wiki/Inverse_hyperbolic_functions#Inverse_hyperbolic_tangent
-atanh(r)
+atanh(r) # fun fact, this is the inverse hyperbolic tangent..., https://en.wikipedia.org/wiki/Inverse_hyperbolic_functions#Inverse_hyperbolic_tangent
 
 ## Variance and SE
 var_z_r <- 1 /(n - 3)
 var_z_r
 sqrt(var_z_r) ## SE
-
 
 ```
 
@@ -633,7 +631,7 @@ If $\pi_T$ and $\pi_C$ denote the population probabilities of being part of the 
 
 **Risk ratio**: $\theta_{RR} = \pi_T /\pi_C$ and $RR = P_T / P_C$
 
-**Odds ratio**: $\omega = \frac{\pi_T(1-\pi_C)}{\pi_C(1-\pi_T)}$ and $OR = \frac{\pi_T(1-\pi_C)}{\pi_C(1-\pi_T)$
+**Odds ratio**: $\omega = \frac{\pi_T(1-\pi_C)}{\pi_C(1-\pi_T)}$ and $OR = \frac{\pi_T(1-\pi_C)}{\pi_C(1-\pi_T)}$
 
 ---
 ## Odds ratio I
@@ -826,8 +824,7 @@ n_died <- 1438
 p_died <- n_died / (n_survived + n_died)
 odds <- p_died / (1 - p_died)
 odds
-# Shorter:
-n_died/n_survived
+n_died/n_survived # Shorter
 log(odds)
 var_logit<- 1/n_survived + 1/n_died
 var_logit
