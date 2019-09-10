@@ -13,7 +13,7 @@ class: center, middle, inverse, title-slide
 
 # Meta-analysis: part 2: it’s all about effect sizes… .
 ### Thomas Pollet (<span class="citation">@tvpollet</span>), Northumbria University
-### 2019-09-06 | <a href="http://tvpollet.github.io/disclaimer">disclaimer</a>
+### 2019-09-10 | <a href="http://tvpollet.github.io/disclaimer">disclaimer</a>
 
 ---
 
@@ -267,6 +267,17 @@ sqrt(var_d)
 In practice you wouldn't have to do this often as you have functions to do this for you.
 
 ---
+## Pooled standard deviation: simpler way.
+
+Note that you can also calculate the pooled SD directly from SDs. (Cohen, 1988).
+
+This is obviously easier... .
+
+`$${SD}_{pooled}= \sqrt\frac{SD_1^2+SD_2^2}{2}$$`
+
+&lt;img src="https://media.giphy.com/media/BYBV1IkkWExHO/giphy.gif" width="350px" style="display: block; margin: auto;" /&gt;
+
+---
 ## Different population standard deviations
 
 If we cannot assume the same population standard deviations.
@@ -342,7 +353,7 @@ y_t &lt;- 120; sd_t &lt;- 5.5; n_t &lt;- 50
 y_c &lt;- 100; sd_c &lt;- 4.5; n_c &lt;- 50
 ## If we assume that the population level standard deviations are the same, then
 numerator &lt;- (((n_t - 1)*sd_t^2) + ((n_c - 1)*sd_c^2))
-(sd_pooled &lt;- sqrt(numerator / (n_t + n_c - 2)))
+(sd_pooled &lt;- sqrt(numerator / (n_t + n_c - 2))) # note again that you could also calculate these from SDs.
 ```
 
 ```
@@ -380,7 +391,6 @@ sqrt(var_d) # SE
 ```
 ## [1] 0.345265
 ```
-
 
 ---
 ## d from _t_-test or F values.
