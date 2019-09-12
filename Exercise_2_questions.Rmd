@@ -1,0 +1,42 @@
+---
+title: "Exercise Session 2"
+author: "Dr. Thomas Pollet, Northumbria University (thomas.pollet@northumbria.ac.uk)"
+date: '`r format(Sys.Date())` | [disclaimer](https://tvpollet.github.io/disclaimer)'
+output:
+  html_document
+---
+
+## Questions.
+
+1. The 'T-Swift' protein was quantified in the blood of the two groups. Women were found to have higher levels of the protein ( _M_ = 1.062, _SD_ = 0.339, _N_ = 60) than men ( _M_ = 0.528; _SD_ = 0.382, _N _= 60). Calculate the raw difference effect size (D) and its variance + SE.
+
+2. Calculate the Cohen's _d_ for the example above and its variance and SE. Calculate Hedges' _g_ and its SE.
+
+3. Convert the Cohen's _d_ you calculated in step 3 to a Pearson _r_ and its SE. The formula for SE is not provided on the slides but you can get it from Borenstein et al. (2009) chapter 7 (see [here](https://www.meta-analysis.com/downloads/Meta-analysis%20Converting%20among%20effect%20sizes.pdf))
+
+4. In a study you see the following table for and association between hay fever and eczema in 11 year old children.
+
+|        |       | Hayfever |       |       |
+|--------|-------|----------|-------|-------|
+|        |       | Yes      | No    | Total |
+| Eczema | Yes   | 141      | 420   | 561   |
+|        | No    | 928      | 13525 | 14453 |
+|        | Total | 1069     | 13945 | 15522 |
+
+What is the probability that a child with eczema will also have hay fever? (proportion and/or %). For children without eczema, what is the probability of having hay fever (proportion and/or %). What is the risk difference? Look up the formula for the SE of risk difference, [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC420070/).
+
+Calculate the Odds Ratio. The ln(OR) and its SE.
+
+5. In a paper, you find a reported risk difference of 12% between men and women in ever having taken LSD. The authors did not report the SE or raw data but did provide the 95 confidence interval fo their estimate (8.2% to 15.8%). Work out the SE for this estimate, so you can use it in your meta-analysis  (tip: use the [Cochrane Handbook](http://handbook-5-1.cochrane.org/), alternatively use google).
+
+6. **Bonus** : You are reading a paper on the effects of an Angiotensin-Converting–Enzyme Inhibitor, Ramipril, on Cardiovascular Events (simply put: heart attacks) in High-Risk Patients and come across some interesting stats. From the table below calculate the ['Number Needed to Treat'](https://www.cebm.net/2014/03/number-needed-to-treat-nnt/). Calculate the [95% CI of NNT](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1114210/).
+
+|          |     | Cardiovascular Event |      |       |
+|----------|-----|----------------------|------|-------|
+|          |     | Yes                  | No   | Total |
+| Ramipril | Yes | 651                  | 3994 | 4645  |
+|          | No  | 826                  | 3826 | 4652  |
+|          |     |                      |      |       |
+
+
+

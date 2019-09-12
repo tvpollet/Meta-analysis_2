@@ -1,0 +1,379 @@
+---
+title: "Solution Session 2"
+author: "Dr. Thomas Pollet, Northumbria University (thomas.pollet@northumbria.ac.uk)"
+date: '`r format(Sys.Date())` | [disclaimer](https://tvpollet.github.io/disclaimer)'
+output:
+  html_document:
+    toc: true
+---
+
+## Questions.
+
+1. The 'T-Swift' protein was quantified in the blood of the two groups. Women were found to have higher levels of the protein ( _M_ = 1.062, _SD_ = 0.339, _N_ = 60) than men ( _M_ = 0.528; _SD_ = 0.382, _N _= 60). Calculate the raw difference effect size (D) and its variance + SE.
+
+2. Calculate the Cohen's _d_ for the example above and its variance and SE. Calculate Hedges' _g_ and its SE.
+
+3. Convert the Cohen's _d_ you calculated in step 3 to a Pearson _r_ and its SE. The formula for SE is not provided on the slides but you can get it from Borenstein et al. (2009) chapter 7 (see [here](https://www.meta-analysis.com/downloads/Meta-analysis%20Converting%20among%20effect%20sizes.pdf))
+
+4. In a study you see the following table for and association between hay fever and eczema in 11 year old children.
+
+|        |       | Hayfever |       |       |
+|--------|-------|----------|-------|-------|
+|        |       | Yes      | No    | Total |
+| Eczema | Yes   | 141      | 420   | 561   |
+|        | No    | 928      | 13525 | 14453 |
+|        | Total | 1069     | 13945 | 15522 |
+
+What is the probability that a child with eczema will also have hay fever? (proportion and/or %). For children without eczema, what is the probability of having hay fever (proportion and/or %). What is the risk difference? Look up the formula for the SE of risk difference, [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC420070/).
+
+Calculate the Odds Ratio. The ln(OR) and its SE.
+
+5. In a paper, you find a reported risk difference of 12% between men and women in ever having taken LSD. The authors did not report the SE or raw data but did provide the 95 confidence interval fo their estimate (8.2% to 15.8%). Work out the SE for this estimate, so you can use it in your meta-analysis  (tip: use the [Cochrane Handbook](http://handbook-5-1.cochrane.org/), alternatively use google).
+
+6. **Bonus** : You are reading a paper on the effects of an Angiotensin-Converting–Enzyme Inhibitor, Ramipril, on Cardiovascular Events (simply put: heart attacks) in High-Risk Patients and come across some interesting stats. From the table below calculate the ['Number Needed to Treat'](https://www.cebm.net/2014/03/number-needed-to-treat-nnt/). Calculate the [95% CI of NNT](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1114210/).
+
+|          |     | Cardiovascular Event |      |       |
+|----------|-----|----------------------|------|-------|
+|          |     | Yes                  | No   | Total |
+| Ramipril | Yes | 651                  | 3994 | 4645  |
+|          | No  | 826                  | 3826 | 4652  |
+|          |     |                      |      |       |
+
+
+## Proteins,... .
+
+1. We use the code from the slides... . Subscript _t_= Women , subscript _c_ = Men. The raw mean difference is .534.
+
+```{r}
+y_t <- 1.062; sd_t <- 0.339; n_t <- 60
+y_c <- 0.528; sd_c <- 0.382; n_c <- 60
+y_t - y_c ## D
+```
+
+Next we calculate the pooled SD. (0.361).
+
+```{r}
+## If we assume that at population level sd_t = sd_c, then
+numerator <- (((n_t - 1)*sd_t^2) + ((n_c - 1)*sd_c^2))
+sd_pooled <- sqrt(numerator / (n_t + n_c - 2))
+sd_pooled
+```
+
+The variance of the raw difference (D) is .004, the standard error is .066. So, for our meta-analysis based on raw differences, we would store .534(+/-.066). 
+
+```{r}
+## Variance of D and se
+(var_d <- ((n_t + n_c)/(n_t * n_c)) * sd_pooled^2)
+sqrt(var_d)
+```
+
+2. Now we calculate Cohen's _d_ and Hedges'_g_.
+
+This is a large effect size, sensu Cohen (1988), 1.48+/-.21.
+
+```{r}
+## Cohen's d:
+d <- (y_t - y_c)/sd_pooled
+d
+```
+
+```{r}
+## Variance of Cohen's d and SE of Cohen's d
+var_d <- ((n_t + n_c)/(n_t * n_c)) + ((d^2) / (2 * (n_t + n_c)))
+var_d
+sqrt(var_d) # SE
+```
+
+We calculate J the correction factor.
+
+```{r}
+## Hedges' g is based on Cohen's d
+## Calculate correction factor J
+J <- (1 - (3/(4 * (n_t + n_c - 2) - 1)))
+J
+```
+
+As you can see Hedges' g is lower, 1.47+/-0.20, but perhaps regardless this remains a sizable effect based on effect size guidelines.
+
+```{r}
+## So, Hedges' g is
+g <- d * J 
+g
+```
+
+```{r}
+## Variance and SE
+var_g <- var_d * (J *J)
+sqrt(var_g) # SE
+```
+
+3. Remember:
+
+$$r=\frac{d}{\sqrt{d^2+A}}$$
+
+and $$A= \frac{(n_1+n_2)^2}{n_1n_2}$$
+
+whereby A is a correction factor for cases where 'group sizes' ( $n_1$ and $n_2$) are not equal. If group sizes are equal we can assume $n_1=n_2$ and then A=4. This is the case here.
+
+
+```{r}
+r<-d/(sqrt((d*d)+4))
+r
+```
+
+You can find the formula at 7.9 (page 5 of [here](https://www.meta-analysis.com/downloads/Meta-analysis%20Converting%20among%20effect%20sizes.pdf)). Remember A=4 when sample sizes are equal.
+
+This gives us Pearson _r_ = .594+/-.054.
+
+```{r}
+var_r<-(16*var_d)/(((d^2)+4)^3)
+var_r
+# Se is
+se_r<-sqrt(var_r)
+se_r
+```
+
+## Hayfever... .
+
+4. The probability that a child with eczema will also have hay fever is 25.1%. The odds is estimated by 141/420. Similarly, for children without eczema the probability of having hay fever is 6.4% and the odds is 928/13525. The risk difference is 18.7%. 
+
+```{r}
+141/561
+928/14453
+# Risk difference
+(141/561)-(928/14453)
+```
+
+We can get the standard error (_se_) for the risk difference as follows:
+
+$$se = \sqrt{\frac{p_1*(1-p_1)}{n_1}+\frac{p_2*(1-p_2)}{n_2}}$$ 
+
+```{r}
+# note that this overrides our previous code for the hayfever example
+prop_1<-(141/561)
+one_minus_prop_1<-1-prop_1
+prop_2<-(928/14453)
+one_minus_prop_2<-1-prop_2
+n_1<-561
+n_2<-14453
+# Following the formula
+part1<-(prop_1*one_minus_prop_1)/n_1 #
+part2<-(prop_2*one_minus_prop_2)/n_2
+se<-sqrt(part1+part2)
+se
+```
+
+So, for our meta-analysis (based on absolute risk difference), we have an (absolute) risk difference of 18.7% +/- 1.8%.
+
+Now let's move on to Odds Ratios (OR):
+
+Remember:
+
+  | Treatment | Control
+--- | --- | ---
+Event | $n_{11}$ | $n_{12}$
+Non-event | $n_{21}$ | $n_{22}$
+
+$$OR= \frac{n_{11}n_{22}}{n_{12}n_{21}}$$ 
+
+For simplicity:
+
+a= $n_{11}$, b = $n_{12}$, c= $n_{21}$ , d= $n_{22}$
+
+```{r}
+# odds ratio
+OR<-(141*13525)/(420*928)
+OR
+inv_OR<-1/OR
+inv_OR
+```
+
+Remember we want to use the ln(OR) as it has better statistical properties... . Note how it behaves when you take the (natural) logarithm of the inverse of our odds ratio.
+
+```{r}
+log(OR)
+log(inv_OR)
+```
+
+the standard error, will be the square root of the variance, given by this formula
+
+$$Var(ln(OR)) = \frac{1}{n_{11}} + \frac{1}{n_{12}} + \frac{1}{n_{21}} + \frac{1}{n_{22}}$$
+
+```{r}
+variance_OR<-(1/141)+(1/420)+(1/928)+(1/13525)
+variance_OR
+se_OR<-sqrt(variance_OR)
+se_OR
+```
+
+So the statistics we would need for our meta-analysis based on ln(OR), would be 1.588 +/- .103.
+
+## LSD,... .
+
+5. You can find the formula in [chapter 7](https://handbook-5-1.cochrane.org/chapter_7/7_7_7_2_obtaining_standard_errors_from_confidence_intervals_and.htm) of the Cochrane handbook.
+
+$$se = (upper limit – lower limit) / 3.92$$
+
+```{r}
+(15.8-8.2)/3.92
+```
+
+For our meta-analysis we thus have 12% (+/-1.93%) - Note that you might want to have a think about precision, so one might want to input 12%(+/-2%)... .
+
+## Heart attacks,...
+
+6. Let's work through this 'heart attacks' example,... .
+
+NNT is nothing more or less than 1/(risk difference). Note that we are talking about the _absolute_ risk difference.
+
+```{r}
+# Proportion of patients with CV events in the ramipril group
+651/4645
+# Proportion of patients with CV events in the placebo group
+826/4652
+```
+
+The (absolute) risk difference is the difference between those 2 values (3.74%).
+
+```{r}
+abs((651/4645)-(826/4652))
+
+```
+
+Incidentally the Relative Risk is .789. So patients treated with Ramipril had a lower risk of a Cardiovascular (CV) event. This is a 21% decrease in the risk of CV events (Risk reduction).
+
+```{r}
+# Relative Risk
+(651/4645)/(826/4652)
+# Risk reduction
+1-((651/4645)/(826/4652))
+```
+
+The NNT is 1/(Risk Difference). A large treatment effect, in the absolute scale, leads to a **small** number needed to treat (NNT). The best possible treatment would save every life, i.e. NNT=1. A treatment saving one life for every 10 patients treated outperforms a competing treatment that saves just  one life for every 50 patients treated. Assuming this study ran for 5 years, this would mean one life saved for every 27 patients (rounded up). Suppose that the study only had 65 events (as opposed to 651) in the Ramipril group and 83 events (as opposed to 826) in the control group. In such a case the NNT would be 260 (!), but the relative risk remains roughly the same .7843 (!).
+
+```{r}
+# NNT
+1/abs((651/4645)-(826/4652))
+
+# Now: fewer events... 
+# absolute risk.
+abs((65/4645)-(83/4652))
+# NNT
+1/abs((65/4645)-(83/4652))
+# relative risk
+(65/4645)/(83/4652)
+```
+
+### 95% CI
+
+The solution lies in calculating the reciprocals (i.e., 1/x) of the 95% CI of the (absolute) risk difference.
+
+As described above, we can get the standard error (_se_) for the risk difference as follows:
+
+$$se = \sqrt{\frac{p_1*(1-p_1)}{n_1}+\frac{p_2*(1-p_2)}{n_2}}$$ 
+
+
+```{r}
+# note that this overrides our previous code for the hayfever example
+prop_1<-(651/4645)
+one_minus_prop_1<-1-prop_1
+prop_2<-(826/4652)
+one_minus_prop_2<-1-prop_2
+n_1<-4645
+n_2<-4652
+# Following the formula
+part1<-(prop_1*one_minus_prop_1)/n_1 #
+part2<-(prop_2*one_minus_prop_2)/n_2
+se<-sqrt(part1+part2)
+```
+
+If we assume normality, then +/-1.96*se gives us the 95% confidence interval.
+
+```{r}
+# note rounding below.
+abs((651/4645)-(826/4652))+1.96*se
+abs((651/4645)-(826/4652))-1.96*se
+```
+
+So the 95% CI of our absolute risk difference, 3.74%, is [2.26% to 5.22%]. 
+
+Now we convert those values to NNT. 
+
+```{r}
+# rounded.
+1/(abs((651/4645)-(826/4652))+1.96*se)
+1/(abs((651/4645)-(826/4652))-1.96*se)
+```
+
+The 95% CI of the NNT ranges from 19 to 44.
+
+Now imagine the scenario described above: the study only had 65 events (as opposed to 651) in the ramipril group and 83 events (as opposed to 826) in the control group.
+
+```{r}
+# note that this overrides our previous code
+prop_1<-(65/4645)
+one_minus_prop_1<-1-prop_1
+prop_2<-(83/4652)
+one_minus_prop_2<-1-prop_2
+n_1<-4645
+n_2<-4652
+# Following the formula
+part1<-(prop_1*one_minus_prop_1)/n_1 #
+part2<-(prop_2*one_minus_prop_2)/n_2
+se<-sqrt(part1+part2)
+```
+
+
+If we assume normality then +/-1.96*se gives us the 95% confidence interval. This includes 0.
+
+```{r}
+abs((65/4645)-(83/4652)) # risk difference
+abs((65/4645)-(83/4652))+1.96*se
+abs((65/4645)-(83/4652))-1.96*se
+```
+
+
+We get a negative number for our 95% CI for NNT, this is peculiar: find about it more [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1114210/). So we could conclude, NNTB=260 (NNTH= 807 to to $-infty$ to NNTB= 111). Confused? Read [the article by Altman](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1114210/).
+
+
+```{r}
+1/(abs((65/4645)-(83/4652))+1.96*se)
+1/(abs((65/4645)-(83/4652))-1.96*se)
+```
+
+## The end.
+
+The end.
+
+```{r, out.width = "400px", echo=FALSE}
+knitr::include_graphics("https://media.giphy.com/media/4xpB3eE00FfBm/giphy.gif") # giphy.com fair use.
+```
+
+## Acknowledgments and further reading... .
+
+The protein example is from [here](https://toptipbio.com/cohens-d/). 
+
+The 'hayfever exczema' Odds Ratio example is from [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1127651/).
+
+The 'Ramipril' NNT example is from [here](http://www.meb.ki.se/~biostat/Papers/tripepi_measures_of_effect.pdf). Note that some of the numbers differ due to rounding.
+
+You can find a nice visualisation on Cohen's _d_ [here](https://rpsychologist.com/d3/cohend/).
+
+Want to find out more about how _d_ compares to **estimates** of _d_ , have a look [here](https://sci-hub.tw/10.1037//0022-006x.64.6.1316) (note also [the correction](https://psycnet.apa.org/record/1998-02631-019)).
+
+Find out more about odds ratios [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1127651/), [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/pdf/ccap19_3p227.pdf), [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC522855/) and [here](http://www.blackwellpublishing.com/specialarticles/jcn_10_268.pdf). [How big is a big odds ratio?](https://sci-hub.tw/https://www.tandfonline.com/doi/full/10.1080/03610911003650383)
+
+More about Number Needed to Treat (NNT): [here](https://bmcmedicine.biomedcentral.com/articles/10.1186/s12916-017-0875-8), [here](https://sci-hub.tw/https://doi.org/10.1111/ijcp.12142) and [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2527399/). For time to event data see [this](https://sci-hub.tw/https://www.bmj.com/content/319/7223/1492). This [script](https://rpubs.com/RatherBit/78905) seems useful to convert a Cohen's _d_ into a NNT.
+
+Note that throughout I have varied the rounding when I reported, you should make your own decisions on how precise you believe your results to be. 
+
+**Cited literature**
+
+Borenstein, M., Hedges, L. V., Higgins, J. P., & Rothstein, H. R. (2009). _Introduction to meta-analysis_. New York, NY: John Wiley & Sons.
+
+Cohen J. (1988). _Statistical Power Analysis for the Behavioral Sciences_. New York, NY: Routledge Academic
+
+```{r}
+sessionInfo()
+```
+
